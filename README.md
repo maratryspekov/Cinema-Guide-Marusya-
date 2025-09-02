@@ -159,12 +159,6 @@ npm run build
 
 ---
 
-## 📝 License
-
-MIT License — see [LICENSE](LICENSE).
-
----
-
 ## 🤝 Contributing
 
 Contributions are welcome! Please open issues or submit pull requests.
@@ -177,6 +171,7 @@ Contributions are welcome! Please open issues or submit pull requests.
 
 - [GitHub](https://github.com/Marat-Vodochka)
 - [LinkedIn](https://linkedin.com/in/marat-ryspekov)
+- [Portfolio](https://ryspekoff.de)
 
 ---
 
