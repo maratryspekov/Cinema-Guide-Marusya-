@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import s from './SearchInput.module.scss';
-import SearchIcon from '../../../assets/icons/icon-search.svg';
+import s from "./SearchInput.module.scss";
+import SearchIcon from "../../../assets/icons/icon-search.svg";
 
 type SearchInputProps = {
   compact?: boolean;
@@ -13,7 +13,7 @@ const SearchInput: React.FC<SearchInputProps> = ({ compact }) => {
     return (
       <button
         className={s.search__iconButton}
-        aria-label="Открыть поиск"
+        aria-label="Open search"
         onClick={() => setIsOpen(true)}
       >
         <img src={SearchIcon} alt="Search icon" />
@@ -24,15 +24,11 @@ const SearchInput: React.FC<SearchInputProps> = ({ compact }) => {
   return (
     <div className={s.search}>
       <img src={SearchIcon} alt="Search icon" className={s.search__icon} />
-      <input
-        type="text"
-        placeholder="Search"
-        className={s.search__input}
-      />
+      <input type="text" placeholder="Search" className={s.search__input} />
       {compact && (
         <button
           className={s.search__closeButton}
-          aria-label="Закрыть поиск"
+          aria-label="Close search"
           onClick={() => setIsOpen(false)}
         >
           ×
