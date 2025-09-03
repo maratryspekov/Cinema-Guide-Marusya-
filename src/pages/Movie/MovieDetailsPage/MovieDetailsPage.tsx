@@ -6,18 +6,26 @@ import type { Movie } from "../../../types/movie";
 import Button from "../../../components/ui/Button/Button";
 import IconFavorite from "../../../assets/icons/icon-fav.svg?react";
 import IconFavoriteActive from "../../../assets/icons/icon-favorite-active.svg?react";
-import {
-  addToFavorites,
-  getFavorites,
-  removeFromFavorites,
-} from "../../../services/movieService";
 import TrailerModal from "../../../components/ui/TrailerModal/TrailerModal";
+
+// RTK Query imports
+import {
+  useGetFavoritesQuery,
+  useAddFavoriteMutation,
+  useRemoveFavoriteMutation,
+} from "../../../features/auth/authApi";
 
 const MovieDetailsPage = () => {
   const { movieId } = useParams();
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+
+  // RTK Query hooks
+  const { data: favorites = [], refetch } = useGetFavoritesQuery();
+  const [addFavorite] = useAddFavoriteMutation();
+  const [removeFavorite] = useRemoveFavoriteMutation();
+
   const [isFavorite, setIsFavorite] = useState(false);
 
   useEffect(() => {
@@ -25,11 +33,14 @@ const MovieDetailsPage = () => {
       getMovieById(movieId)
         .then(setMovie)
         .finally(() => setLoading(false));
-      getFavorites().then((favs) => {
-        setIsFavorite(favs.some((m) => String(m.id) === String(movieId)));
-      });
     }
   }, [movieId]);
+
+  useEffect(() => {
+    if (movie && favorites.length) {
+      setIsFavorite(favorites.some((m) => String(m.id) === String(movieId)));
+    }
+  }, [favorites, movie, movieId]);
 
   const handleTrailerClick = () => {
     setIsTrailerOpen(true);
@@ -38,12 +49,11 @@ const MovieDetailsPage = () => {
   const toggleFavorite = async () => {
     if (!movie) return;
     if (isFavorite) {
-      await removeFromFavorites(movie.id);
-      setIsFavorite(false);
+      await removeFavorite(movie.id).unwrap();
     } else {
-      await addToFavorites(movie.id);
-      setIsFavorite(true);
+      await addFavorite(movie.id).unwrap();
     }
+    refetch();
   };
 
   if (loading)
