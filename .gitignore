@@ -23,7 +23,6 @@ build
 .env.development.local
 .env.test.local
 .env.production.local
-*.local
 
 # Cache directories
 .cache
@@ -99,3 +98,4 @@ vite.config.ts.timestamp-*
 # package-lock.json  # Uncomment if using yarn
 # yarn.lock          # Uncomment if using npm
 .vercel
+!.env.example
