@@ -68,6 +68,8 @@ export async function logout(): Promise<void> {
 
 export async function registerUser(data: RegisterUser): Promise<void> {
   try {
+    // confirmPassword is only for validation, not sent to server
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { confirmPassword, ...registerData } = data;
 
     console.log("Registering user:", registerData);
