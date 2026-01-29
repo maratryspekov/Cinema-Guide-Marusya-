@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import type { FC } from "react";
 import s from "./RegisterForm.module.scss";
-import LogoBlack from "../../../../public/icon-marusya-dark.svg";
+import LogoBlack from "../../../assets/icons/icon-logo-black.svg";
 import EmailIcon from "../../../assets/icons/icon-email.svg?react";
 import UserIcon from "../../../assets/icons/icon-user.svg?react";
 import PasswordIcon from "../../../assets/icons/icon-password.svg?react";

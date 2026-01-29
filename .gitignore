@@ -99,3 +99,10 @@ vite.config.ts.timestamp-*
 # yarn.lock          # Uncomment if using npm
 .vercel
 !.env.example
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/

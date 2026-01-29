@@ -20,17 +20,23 @@ const Hero = () => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isTrailerOpen, setIsTrailerOpen] = useState(false);
+
+  // локальное состояние, но обновляем его аккуратно
   const [isFavorite, setIsFavorite] = useState(false);
+
   const [pendingFavoriteAction, setPendingFavoriteAction] = useState<
     "add" | "remove" | null
   >(null);
+  const [isFavBusy, setIsFavBusy] = useState(false);
 
   const user = useAppSelector((s) => s.auth.user);
   const navigate = useNavigate();
 
-  // favorites are now handled via RTK Query
-  const { data: favorites = [], refetch: refetchFavorites } =
-    useGetFavoritesQuery(undefined, { skip: !user });
+  const {
+    data: favorites = [],
+    refetch: refetchFavorites,
+    isSuccess: favoritesLoaded,
+  } = useGetFavoritesQuery(undefined, { skip: !user });
 
   const [addFavorite] = useAddFavoriteMutation();
   const [removeFavorite] = useRemoveFavoriteMutation();
@@ -43,49 +49,69 @@ const Hero = () => {
     fetchMovie();
   }, []);
 
-  // synchronize favorite status
+  // ✅ ВАЖНО: синхронизацию делаем только когда favorites реально получены
   useEffect(() => {
-    if (user && movie) {
-      setIsFavorite(favorites.some((f) => f.id === movie.id));
-    } else {
+    if (!user || !movie) {
       setIsFavorite(false);
-    }
-  }, [user, movie, favorites]);
-
-  const handleFavoriteClick = () => {
-    if (!user) {
-      setPendingFavoriteAction(isFavorite ? "remove" : "add");
-      setIsAuthOpen(true);
       return;
     }
-    performFavoriteAction();
-  };
 
-  const performFavoriteAction = async () => {
-    if (!movie) return;
+    // пока favorites не загружены — НЕ перезаписываем isFavorite
+    if (!favoritesLoaded) return;
+
+    setIsFavorite(favorites.some((f) => f.id === movie.id));
+  }, [user, movie, favorites, favoritesLoaded]);
+
+  // ✅ делаем действие с явным "add/remove", чтобы не зависеть от старого isFavorite
+  const performFavoriteAction = async (action: "add" | "remove") => {
+    if (!movie || isFavBusy) return;
+
+    setIsFavBusy(true);
+
+    // оптимистично сразу меняем UI
+    const nextIsFav = action === "add";
+    setIsFavorite(nextIsFav);
 
     try {
-      if (isFavorite) {
+      if (action === "remove") {
         await removeFavorite(movie.id).unwrap();
-        setIsFavorite(false);
         toast.success("Movie removed from favorites");
       } else {
         await addFavorite(movie.id).unwrap();
-        setIsFavorite(true);
         toast.success("Movie added to favorites");
       }
-      // refresh favorites list
-      if (user) refetchFavorites();
+
+      if (user) await refetchFavorites();
     } catch (error) {
+      // откат UI, если ошибка
+      setIsFavorite(!nextIsFav);
       toast.error("Error updating favorites");
+    } finally {
+      setIsFavBusy(false);
     }
+  };
+
+  const handleFavoriteClick = () => {
+    if (!movie) return;
+
+    if (!user) {
+      // пользователь хочет "включить" избранное (если он не залогинен)
+      setPendingFavoriteAction("add");
+      setIsAuthOpen(true);
+      return;
+    }
+
+    // если залогинен — решаем действие на основе текущего isFavorite
+    performFavoriteAction(isFavorite ? "remove" : "add");
   };
 
   const handleAuthSuccess = () => {
     setIsAuthOpen(false);
+
     if (pendingFavoriteAction) {
-      performFavoriteAction();
-      setPendingFavoriteAction(null);
+      const action = pendingFavoriteAction;
+      setPendingFavoriteAction(null); // ✅ сброс ДО выполнения, чтобы не было дублей
+      performFavoriteAction(action);
     }
   };
 
@@ -103,7 +129,6 @@ const Hero = () => {
       ? `${Math.floor(movie.runtime / 60)}h ${movie.runtime % 60}m`
       : "";
 
-  // round to 1 decimal place
   const roundedRating =
     movie.tmdbRating !== undefined && movie.tmdbRating !== null
       ? (Math.round(Number(movie.tmdbRating) * 10) / 10).toFixed(1)
@@ -132,19 +157,25 @@ const Hero = () => {
             >
               Trailer
             </Button>
+
             <div className={s.buttonsRow}>
               <Button className={s.hero__btn} onClick={handleAboutClick}>
                 About Movie
               </Button>
+
               <Button
                 className={s.hero__iconbtn}
+                aria-pressed={isFavorite}
+                data-testid="favorite-toggle"
                 aria-label={
                   isFavorite ? "Remove from favorites" : "Add to favorites"
                 }
                 onClick={handleFavoriteClick}
+                disabled={isFavBusy} // ✅ чтобы не было двойных кликов → двойных POST
               >
                 <IconHeart style={{ color: isFavorite ? "#B4A9FF" : "#fff" }} />
               </Button>
+
               <Button
                 className={s.hero__iconbtn}
                 aria-label="Refresh movie"
