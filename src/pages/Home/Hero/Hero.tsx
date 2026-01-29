@@ -82,7 +82,7 @@ const Hero = () => {
       }
 
       if (user) await refetchFavorites();
-    } catch (error) {
+    } catch {
       // откат UI, если ошибка
       setIsFavorite(!nextIsFav);
       toast.error("Error updating favorites");

@@ -1,12 +1,13 @@
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import MovieCard from "../../../components/MovieCard/MovieCard";
+import type { Movie } from "../../../types/movie";
 import s from "./MoviePage.module.scss";
 
 const MoviesPage = () => {
   const [searchParams] = useSearchParams();
   const genre = searchParams.get("genre");
-  const [movies, setMovies] = useState<any[]>([]);
+  const [movies, setMovies] = useState<Movie[]>([]);
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
@@ -27,10 +28,10 @@ const MoviesPage = () => {
     if (genre) {
       const limit = isMobile ? 5 : 10; // 5 on mobile, 10 on desktop
       fetch(
-        `https://cinemaguide.skillbox.cc/movie?genre=${genre}&limit=${limit}&page=${page}&sort=rating`
+        `https://cinemaguide.skillbox.cc/movie?genre=${genre}&limit=${limit}&page=${page}&sort=rating`,
       )
         .then((res) => res.json())
-        .then((data) => {
+        .then((data: Movie[]) => {
           if (data.length < limit) setHasMore(false);
           setMovies((prev) => (page === 1 ? data : [...prev, ...data]));
         });

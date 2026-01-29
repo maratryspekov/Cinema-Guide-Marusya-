@@ -1,4 +1,5 @@
 import api from "./api";
+import axios, { type AxiosError } from "axios";
 import { z } from "zod";
 
 // user's schema for validation
@@ -27,12 +28,20 @@ export const RegisterUserSchema = z
 
 export type RegisterUser = z.infer<typeof RegisterUserSchema>;
 
+type ApiErrorData = {
+  message?: string;
+  error?: string;
+};
+
+const isAxiosError = (error: unknown): error is AxiosError<ApiErrorData> =>
+  axios.isAxiosError(error);
+
 export async function fetchMe(): Promise<User> {
   try {
     const response = await api.get("/profile", { withCredentials: true });
     return UserSchema.parse(response.data);
-  } catch (error: any) {
-    if (error.response?.status === 401) {
+  } catch (error: unknown) {
+    if (isAxiosError(error) && error.response?.status === 401) {
       throw new Error("Unauthorized");
     }
     throw error;
@@ -45,8 +54,8 @@ export async function login(data: {
 }): Promise<void> {
   try {
     await api.post("/auth/login", data, { withCredentials: true });
-  } catch (error: any) {
-    if (error.response?.status === 401) {
+  } catch (error: unknown) {
+    if (isAxiosError(error) && error.response?.status === 401) {
       throw new Error("Invalid email or password");
     }
     throw error;
@@ -90,15 +99,16 @@ export async function registerUser(data: RegisterUser): Promise<void> {
     }
 
     throw new Error("Unexpected server response");
-  } catch (error: any) {
-    console.error("Error status:", error.response?.status);
-    console.error("Error data:", error.response?.data);
+  } catch (error: unknown) {
+    if (isAxiosError(error)) {
+      console.error("Error status:", error.response?.status);
+      console.error("Error data:", error.response?.data);
 
-    // Handle both 400 and 409 statuses
-    if (error.response?.status === 400 || error.response?.status === 409) {
-      const message =
-        error.response?.data?.error || "User with this email already exists";
-      throw new Error(message);
+      if (error.response?.status === 400 || error.response?.status === 409) {
+        const message =
+          error.response?.data?.error || "User with this email already exists";
+        throw new Error(message);
+      }
     }
 
     throw new Error("Registration error");

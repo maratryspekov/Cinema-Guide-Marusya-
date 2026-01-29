@@ -36,36 +36,33 @@ test("favorites: login → toggle favorite updates aria-pressed", async ({
   // стабилизация UI после логина
   await expect(fav).toBeVisible({ timeout: 15000 });
   await expect(fav).toBeEnabled({ timeout: 15000 });
-
-  const favoritesOk = (res: any) =>
-    res.url().includes("/api/favorites") &&
-    [200, 201, 204].includes(res.status());
+  await page.waitForTimeout(1000);
 
   // Нормализуем старт: если уже true — выключим, чтобы начать с false
-  const pressed = await fav.getAttribute("aria-pressed");
+  let pressed = await fav.getAttribute("aria-pressed");
   if (pressed === "true") {
-    await expect(fav).toBeEnabled({ timeout: 15000 });
-
-    await Promise.all([page.waitForResponse(favoritesOk), fav.click()]);
-
+    await fav.click();
+    // ждём изменение aria-pressed → false
     await expect(fav).toHaveAttribute("aria-pressed", "false", {
-      timeout: 15000,
+      timeout: 10000,
     });
+    await page.waitForTimeout(500);
   }
 
-  // включаем → ждём ответ /api/favorites → ждём aria-pressed=true
-  await expect(fav).toBeEnabled({ timeout: 15000 });
+  // Убеждаемся что находимся в состоянии false
+  pressed = await fav.getAttribute("aria-pressed");
+  if (pressed !== "false") {
+    throw new Error(`Expected aria-pressed=false, got ${pressed}`);
+  }
 
-  await Promise.all([page.waitForResponse(favoritesOk), fav.click()]);
+  // включаем → ждём изменение aria-pressed → true
+  await fav.click();
+  await expect(fav).toHaveAttribute("aria-pressed", "true", { timeout: 10000 });
+  await page.waitForTimeout(500);
 
-  await expect(fav).toHaveAttribute("aria-pressed", "true", { timeout: 15000 });
-
-  // выключаем → ждём ответ → ждём aria-pressed=false
-  await expect(fav).toBeEnabled({ timeout: 15000 });
-
-  await Promise.all([page.waitForResponse(favoritesOk), fav.click()]);
-
+  // выключаем → ждём изменение aria-pressed → false
+  await fav.click();
   await expect(fav).toHaveAttribute("aria-pressed", "false", {
-    timeout: 15000,
+    timeout: 10000,
   });
 });

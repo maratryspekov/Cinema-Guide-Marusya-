@@ -79,13 +79,28 @@ const RegisterForm: FC<RegisterFormProps> = ({
     }
   };
 
-  const errorMessage =
-    (error &&
-      "status" in error &&
-      typeof error.status === "number" &&
-      (error as any).data?.message) ||
-    (error && "error" in error && (error as any).error) ||
-    "";
+  const getErrorMessage = (err: unknown) => {
+    if (!err || typeof err !== "object") return "";
+
+    if (
+      "status" in err &&
+      typeof (err as { status?: number }).status === "number"
+    ) {
+      const data = (err as { data?: { message?: string } }).data;
+      return data?.message ?? "";
+    }
+
+    if (
+      "error" in err &&
+      typeof (err as { error?: string }).error === "string"
+    ) {
+      return (err as { error?: string }).error ?? "";
+    }
+
+    return "";
+  };
+
+  const errorMessage = getErrorMessage(error);
 
   return (
     <form className={s.form} onSubmit={submitHandler}>
