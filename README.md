@@ -1,5 +1,7 @@
 # Cinema Guide (Marusya)
 
+[![CI](https://github.com/maratryspekov/Cinema-Guide-Marusya-/actions/workflows/ci.yml/badge.svg)](https://github.com/maratryspekov/Cinema-Guide-Marusya-/actions/workflows/ci.yml)
+
 A modern movie discovery web app built with React, TypeScript, and Vite. Search films, browse by genres, view details, and manage your favorites — all in a clean dark UI.
 
 ![Account Page](./src/assets/screenshots/image-account.png)
@@ -29,7 +31,7 @@ A modern movie discovery web app built with React, TypeScript, and Vite. Search 
 - **Styles:** SCSS Modules
 - **Routing:** React Router
 - **State:** Redux Toolkit & RTK Query
-- **Icons:** SVGR (`*.svg?react`), static assets from `public/`
+- **Icons:** SVGR (`*.svg?react`), static assets from `src/assets`
 
 ---
 
@@ -78,8 +80,8 @@ VITE_API_URL=https://cinemaguide.skillbox.cc
 ## 📦 Installation
 
 ```sh
-git clone https://github.com/Marat-Vodochka/vite-vk-marusya.git
-cd vite-vk-marusya
+git clone https://github.com/maratryspekov/Cinema-Guide-Marusya-.git
+cd Cinema-Guide-Marusya-
 npm install
 npm run dev
 # Open http://localhost:5173
@@ -115,6 +117,24 @@ public/                 # Static files
 - `npm run preview` — Preview production build
 - `npm run lint` — Run ESLint
 - `npm run typecheck` — TypeScript type checking
+- `npm run test:e2e` — Playwright E2E (Chromium)
+
+---
+
+## 🧪 E2E (Playwright)
+
+```sh
+npm run test:e2e
+```
+
+Create a `.env.local` with login credentials for E2E:
+
+```
+E2E_EMAIL=your-email@example.com
+E2E_PASSWORD=your-password
+```
+
+On CI the E2E login uses GitHub Secrets: `E2E_EMAIL`, `E2E_PASSWORD`.
 
 ---
 
@@ -123,6 +143,22 @@ public/                 # Static files
 - Global store with Redux Toolkit
 - API layer via RTK Query (auto caching, revalidation)
 - Typed hooks: `useAppDispatch`, `useAppSelector`
+
+---
+
+## 🏛️ Architecture (short)
+
+- Auth via cookie session (`credentials: "include"`) + RTK Query
+- API requests routed through Vite proxy
+- User state stored in Redux (auth slice)
+
+---
+
+## ✅ Quality
+
+- ESLint + TypeScript
+- Playwright E2E tests
+- CI workflow (lint/typecheck/e2e)
 
 ---
 
@@ -169,7 +205,7 @@ Contributions are welcome! Please open issues or submit pull requests.
 
 **Marat Ryspekov**
 
-- [GitHub](https://github.com/Marat-Vodochka)
+- [GitHub](https://github.com/maratryspekov)
 - [LinkedIn](https://linkedin.com/in/marat-ryspekov)
 - [Portfolio](https://ryspekoff.de)
 
@@ -177,4 +213,4 @@ Contributions are welcome! Please open issues or submit pull requests.
 
 ⭐ **If you like this project, please give it a star on GitHub!**
 
-**Project Link**: [https://github.com/Marat-Vodochka/vite-vk-marusya]
+**Project Link**: [https://github.com/maratryspekov/Cinema-Guide-Marusya-]

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import type { FC } from "react";
 import s from "../LoginForm/LoginForm.module.scss";
+import LogoBlack from "../../../assets/icons/icon-logo-black.svg";
 import EmailIcon from "../../../assets/icons/icon-email.svg?react";
 import PasswordIcon from "../../../assets/icons/icon-password.svg?react";
 import FormField from "../../ui/FormField/FormField";
@@ -67,7 +68,7 @@ const LoginForm: FC<LoginFormProps> = ({
   return (
     <form className={s.form} onSubmit={submitHandler}>
       <div className={s.logo_wrapper}>
-        <img src="/icon-marusya-dark.svg" alt="Marusya logo black" />
+        <img src={LogoBlack} alt="Marusya logo black" />
       </div>
 
       <div className={s.inputContainer}>
