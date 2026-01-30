@@ -49,7 +49,9 @@ test("user can browse genres, find movie, and view complete details", async ({
   await expect(movieTitle).toBeVisible({ timeout: 5000 });
 
   // Rating badge
-  const ratingBadge = page.locator("[class*='rating'], [class*='badge']").first();
+  const ratingBadge = page
+    .locator("[class*='rating'], [class*='badge']")
+    .first();
   await expect(ratingBadge).toBeVisible({ timeout: 5000 });
 
   // Description text
@@ -61,5 +63,4 @@ test("user can browse genres, find movie, and view complete details", async ({
   await expect(metadata).toBeVisible({ timeout: 5000 });
 
   console.log("✅ Browse → Genres → Movie → Details flow complete");
-});
 });
