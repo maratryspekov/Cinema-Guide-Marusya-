@@ -11,14 +11,14 @@ test("debug: favorites state after login", async ({ page, context }) => {
 
   await page.goto("/");
 
-  // 1) Находим кнопку избранного по testid (самый стабильный способ)
+  // 1) Find favorite button by testid (most stable way)
   let favBtn = page.getByTestId("favorite-toggle");
   await expect(favBtn).toBeVisible();
 
-  // 2) Жмём -> откроется логин (если не авторизован)
+  // 2) Click -> login modal will open (if not authorized)
   await favBtn.click();
 
-  // 3) Логин
+  // 3) Login
   const emailInput = page.getByRole("textbox", { name: "Email" });
   const passInput = page.getByRole("textbox", { name: "Password" });
 
@@ -28,14 +28,14 @@ test("debug: favorites state after login", async ({ page, context }) => {
 
   await page.getByRole("main").getByRole("button", { name: "Sign In" }).click();
 
-  // ждём закрытие модалки (по исчезновению email)
+  // Wait for modal to close (by email input disappearing)
   await expect(emailInput).toBeHidden({ timeout: 8000 });
 
-  // (важно) после логина компонент мог перерендериться — пере-берём локатор
+  // (important) After login, component may have rerendered - re-get locator
   favBtn = page.getByTestId("favorite-toggle");
   await expect(favBtn).toBeVisible();
 
-  // --- СНИМОК ДО ---
+  // --- SNAPSHOT BEFORE ---
   const before = await page.evaluate(() => ({
     keys: Object.keys(localStorage),
     values: Object.fromEntries(
@@ -52,8 +52,8 @@ test("debug: favorites state after login", async ({ page, context }) => {
   }));
   console.log("BTN BEFORE:", btnBefore);
 
-  // 4) Кликаем favorite уже авторизованным
-  // Ждём сетевой запрос /api/favorites, чтобы "после" было реально после изменения
+  // 4) Click favorite while authorized
+  // Wait for /api/favorites request so "after" is truly after the change
   await Promise.all([
     page.waitForResponse((res) => {
       const url = res.url();
@@ -65,7 +65,7 @@ test("debug: favorites state after login", async ({ page, context }) => {
     favBtn.click(),
   ]);
 
-  // --- СНИМОК ПОСЛЕ ---
+  // --- SNAPSHOT AFTER ---
   const after = await page.evaluate(() => ({
     keys: Object.keys(localStorage),
     values: Object.fromEntries(

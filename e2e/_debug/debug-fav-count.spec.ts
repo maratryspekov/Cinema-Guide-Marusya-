@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("debug: how many favorite buttons exist", async ({ page }) => {
   await page.goto("/");
 
-  // Ждём, что главная реально загрузилась (подстрой под свой UI)
+  // Wait for main page to load (adjust for your UI)
   await expect(page.getByRole("heading", { name: /top 10/i })).toBeVisible({
     timeout: 15000,
   });

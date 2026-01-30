@@ -9,20 +9,20 @@ test("login: after sign in, favorites action no longer opens login modal", async
 
   await page.goto("/");
 
-  // 1) Пытаемся добавить в избранное → должно попросить логин
+  // 1) Try to add to favorites - should prompt for login
   await page.getByRole("button", { name: /Add to favorites/i }).click();
   await expect(page.getByPlaceholder(/email/i)).toBeVisible();
 
-  // 2) Вводим креды и жмём Sign In (в форме)
+  // 2) Enter credentials and click Sign In (in form)
   await page.getByPlaceholder(/email/i).fill(email!);
   await page.getByPlaceholder(/password/i).fill(password!);
   await page.getByRole("main").getByRole("button", { name: "Sign In" }).click();
 
-  // 3) Проверка успеха: пробуем снова "Add to favorites"
-  //    Если логин успешен, модалка логина больше не должна появляться.
+  // 3) Success check: try "Add to favorites" again
+  //    If login succeeds, login modal should not appear anymore
   await expect(page.locator(".overlay-class")).toBeHidden(); // Adjust selector as needed
   await page.getByRole("button", { name: /Add to favorites/i }).click();
 
-  // Ждём чуть-чуть, чтобы UI успел среагировать
+  // Wait a bit for UI to respond
   await expect(page.getByPlaceholder(/email/i)).toBeHidden({ timeout: 3000 });
 });

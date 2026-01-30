@@ -7,11 +7,11 @@ test('unauthorized: clicking "Add to favorites" opens login modal', async ({
 
   await page.getByRole("button", { name: /Add to favorites/i }).click();
 
-  // Проверяем модалку через поля — они уникальнее
+  // Check modal through fields - they are more unique
   await expect(page.getByPlaceholder(/email/i)).toBeVisible();
   await expect(page.getByPlaceholder(/password/i)).toBeVisible();
 
-  // Проверяем submit-кнопку в форме (а не кнопку в хедере)
+  // Check submit button in form (not header button)
   await expect(
     page.getByRole("main").getByRole("button", { name: "Sign In" }),
   ).toBeVisible();

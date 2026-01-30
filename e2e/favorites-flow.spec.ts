@@ -12,12 +12,12 @@ test("favorites: login → toggle favorite updates aria-pressed", async ({
   await page.addInitScript(() => localStorage.clear());
   await page.goto("/");
 
-  // открыть логин через клик по избранному
+  // Open login modal via favorite click
   const fav = page.getByTestId("favorite-toggle");
   await expect(fav).toBeVisible({ timeout: 15000 });
   await fav.click();
 
-  // логин
+  // Login
   await page.getByRole("textbox", { name: "Email" }).fill(email!);
   await page.getByRole("textbox", { name: "Password" }).fill(password!);
 
@@ -28,39 +28,39 @@ test("favorites: login → toggle favorite updates aria-pressed", async ({
     page.getByRole("main").getByRole("button", { name: "Sign In" }).click(),
   ]);
 
-  // ждём что модалка ушла
+  // Wait for modal to close
   await expect(page.getByRole("textbox", { name: "Email" })).toBeHidden({
     timeout: 15000,
   });
 
-  // стабилизация UI после логина
+  // UI stabilization after login
   await expect(fav).toBeVisible({ timeout: 15000 });
   await expect(fav).toBeEnabled({ timeout: 15000 });
   await page.waitForTimeout(1000);
 
-  // Нормализуем старт: если уже true — выключим, чтобы начать с false
+  // Normalize start state: if true, toggle to false
   let pressed = await fav.getAttribute("aria-pressed");
   if (pressed === "true") {
     await fav.click();
-    // ждём изменение aria-pressed → false
+    // Wait for aria-pressed → false
     await expect(fav).toHaveAttribute("aria-pressed", "false", {
       timeout: 10000,
     });
     await page.waitForTimeout(500);
   }
 
-  // Убеждаемся что находимся в состоянии false
+  // Ensure we start in false state
   pressed = await fav.getAttribute("aria-pressed");
   if (pressed !== "false") {
     throw new Error(`Expected aria-pressed=false, got ${pressed}`);
   }
 
-  // включаем → ждём изменение aria-pressed → true
+  // Toggle on - wait for aria-pressed → true
   await fav.click();
   await expect(fav).toHaveAttribute("aria-pressed", "true", { timeout: 10000 });
   await page.waitForTimeout(500);
 
-  // выключаем → ждём изменение aria-pressed → false
+  // Toggle off - wait for aria-pressed → false
   await fav.click();
   await expect(fav).toHaveAttribute("aria-pressed", "false", {
     timeout: 10000,

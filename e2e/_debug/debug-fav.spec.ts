@@ -3,7 +3,7 @@ import { test, expect } from "@playwright/test";
 test("debug: what changes on favorites button", async ({ page }) => {
   await page.goto("/");
 
-  // берём ПЕРВУЮ кнопку "Add to favorites" (чтобы не ловить strict mode)
+  // Get FIRST "Add to favorites" button (to avoid strict mode)
   const favBtn = page
     .getByRole("button", { name: /add to favorites|remove from favorites/i })
     .first();
@@ -20,7 +20,7 @@ test("debug: what changes on favorites button", async ({ page }) => {
 
   await favBtn.click();
 
-  // ждём небольшой ререндер
+  // Wait for rerender
   await page.waitForTimeout(500);
 
   const afterLabel = await favBtn.getAttribute("aria-label");
