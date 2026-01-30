@@ -1,6 +1,9 @@
 # Cinema Guide (Marusya)
 
 [![CI](https://github.com/maratryspekov/Cinema-Guide-Marusya-/actions/workflows/ci.yml/badge.svg)](https://github.com/maratryspekov/Cinema-Guide-Marusya-/actions/workflows/ci.yml)
+[![Playwright Tests](https://img.shields.io/badge/tested%20with-Playwright-45ba4b?logo=playwright)](https://playwright.dev/)
+
+> 🚀 **[Live Demo](https://cinema-guide-marusya.vercel.app)** (if deployed on Vercel)
 
 A modern movie discovery web app built with React, TypeScript, and Vite. Search films, browse by genres, view details, and manage your favorites — all in a clean dark UI.
 
@@ -69,11 +72,18 @@ server: {
 
 ### 🔧 Environment Variables
 
-Create a `.env.local` (not committed to Git):
+Create a `.env.local` file in the project root (not committed to Git):
 
-```
+```env
+# Vite environment variable for API URL
 VITE_API_URL=https://cinemaguide.skillbox.cc
+
+# E2E test credentials (optional, only needed for running Playwright tests locally)
+E2E_EMAIL=your-email@example.com
+E2E_PASSWORD=your-password
 ```
+
+> **Note:** You can keep all environment variables in one `.env.local` file. The `E2E_*` variables are only used by Playwright tests. On CI, these are provided via GitHub Secrets.
 
 ---
 
@@ -117,24 +127,34 @@ public/                 # Static files
 - `npm run preview` — Preview production build
 - `npm run lint` — Run ESLint
 - `npm run typecheck` — TypeScript type checking
-- `npm run test:e2e` — Playwright E2E (Chromium)
+- `npm run test:e2e` — Run Playwright E2E tests (Chromium)
+- `npm run test:e2e:ui` — Run tests in Playwright UI mode
+- `npm run test:e2e:headed` — Run tests with browser visible
+- `npm run test:e2e:report` — Open last Playwright HTML report
 
 ---
 
-## 🧪 E2E (Playwright)
+## 🧪 E2E Testing (Playwright)
+
+Run E2E tests locally:
 
 ```sh
-npm run test:e2e
+npm run test:e2e              # Run all tests headless
+npm run test:e2e:ui           # Interactive UI mode
+npm run test:e2e:headed       # See browser while testing
+npm run test:e2e:report       # View last test results
 ```
 
-Create a `.env.local` with login credentials for E2E:
+**Requirements:**
 
-```
-E2E_EMAIL=your-email@example.com
-E2E_PASSWORD=your-password
-```
+- E2E credentials must be set in `.env.local` (see Environment Variables section above)
+- Dev server should be running on `http://localhost:5173`
 
-On CI the E2E login uses GitHub Secrets: `E2E_EMAIL`, `E2E_PASSWORD`.
+**On CI:**
+
+- Tests run automatically on push/PR to main/master
+- Credentials are provided via GitHub Secrets: `E2E_EMAIL`, `E2E_PASSWORD`
+- Test artifacts (traces, videos) are uploaded on failure
 
 ---
 
@@ -154,11 +174,16 @@ On CI the E2E login uses GitHub Secrets: `E2E_EMAIL`, `E2E_PASSWORD`.
 
 ---
 
-## ✅ Quality
+## ✅ Quality & Testing
 
-- ESLint + TypeScript
-- Playwright E2E tests
-- CI workflow (lint/typecheck/e2e)
+- **Code Quality:** ESLint + TypeScript strict mode
+- **E2E Testing:** Playwright (auth flows, favorites, search)
+- **CI/CD:** GitHub Actions workflow
+  - ✓ Lint check
+  - ✓ Type checking
+  - ✓ E2E tests on Chromium
+  - ✓ Automated test reports
+- **Responsive Design:** Mobile-first approach with adaptive breakpoints (768px, 1024px)
 
 ---
 
@@ -213,4 +238,4 @@ Contributions are welcome! Please open issues or submit pull requests.
 
 ⭐ **If you like this project, please give it a star on GitHub!**
 
-**Project Link**: [https://github.com/maratryspekov/Cinema-Guide-Marusya-]
+**Project Link**:https://github.com/maratryspekov/Cinema-Guide-Marusya-

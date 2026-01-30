@@ -51,21 +51,24 @@
   justify-items: center;
   margin-bottom: 40px;
 
-  @media (max-width: 767px) {
+  @media (max-width: 1024px) and (min-width: 769px) {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+  }
+
+  @media (max-width: 768px) {
     display: flex;
     flex-direction: column;
-    
   }
 
   & > * {
     width: 100%;
 
-    @media (max-width: 767px) {
-     width: 335px;
-     height: 502px;
+    @media (max-width: 768px) {
+      width: 335px;
+      height: 502px;
     }
   }
-  
 }
 
 .showMoreBtn {

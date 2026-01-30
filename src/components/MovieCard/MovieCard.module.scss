@@ -6,33 +6,31 @@
   border-radius: 16px;
   transition: transform 0.3s ease;
   cursor: pointer;
-  width: 224px;  
+  width: 224px;
   height: 336px;
   overflow: visible;
-  
 
-
-  @media (max-width: 767px) {
-            object-fit: cover;
-            align-self: stretch;
-            background-color: transparent !important;
-            box-shadow: none !important;
-            width: 224px;
-            height: 336px;
+  @media (max-width: 768px) {
+    object-fit: cover;
+    align-self: stretch;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    width: 100%;
+    max-width: 224px;
+    height: 336px;
   }
 
   &:hover {
     transform: translateY(-4px);
 
-    @media (max-width: 767px) {
+    @media (max-width: 768px) {
       transform: translateY(0);
-      
     }
-   }
+  }
 
-   &__inner {
+  &__inner {
     border-radius: 12px;
-    overflow: hidden; 
+    overflow: hidden;
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -48,12 +46,12 @@
     align-items: center;
     justify-content: center;
     height: 48px;
-      min-width: 62px;
+    min-width: 62px;
     white-space: nowrap;
     height: 32px;
     background-color: #fff;
-    color: #6A5DC2;
-    font-family: 'Play', sans-serif;
+    color: #6a5dc2;
+    font-family: "Play", sans-serif;
     font-weight: 700;
     font-style: normal;
     font-size: 24px;
@@ -63,7 +61,7 @@
     box-sizing: border-box;
     padding: 0 8px;
 
-    @media (max-width: 767px) {
+    @media (max-width: 768px) {
       font-size: 24px;
       height: 48px;
       min-width: 62px;
@@ -73,7 +71,6 @@
       border-radius: 50px;
     }
   }
-
 
   &__image {
     width: 100%;
@@ -104,9 +101,9 @@
 }
 
 .cardFullWidth {
-  @media (max-width: 767px) {
+  @media (max-width: 768px) {
     width: 100% !important;
-    
+
     .card__inner {
       width: 100% !important;
     }
