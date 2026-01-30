@@ -43,7 +43,7 @@ test("favorite remains saved after page refresh", async ({ page, context }) => {
   console.log("✅ Logged in");
 
   // 2. NORMALIZE START STATE - Ensure favorite is OFF
-  let pressed = await favoriteToggle.getAttribute("aria-pressed");
+  const pressed = await favoriteToggle.getAttribute("aria-pressed");
   if (pressed === "true") {
     await favoriteToggle.click();
     await expect(favoriteToggle).toHaveAttribute("aria-pressed", "false", {

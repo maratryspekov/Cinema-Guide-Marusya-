@@ -32,7 +32,6 @@ test("user can search for movie and view complete details", async ({
   // 5. CLICK FIRST RESULT
   const firstResult = resultsDropdown.locator("button, a").first();
   await expect(firstResult).toBeVisible();
-  const movieId = (await firstResult.getAttribute("href")) || "";
 
   await firstResult.click();
   await page

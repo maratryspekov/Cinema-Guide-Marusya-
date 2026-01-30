@@ -62,7 +62,7 @@ test("unauthorized user is prompted to login for favorites, then can save", asyn
 
   // 8. FAVORITE STATE CHANGES - aria-pressed toggles
   // Initial state: probably false (just logged in)
-  let pressed = await favoriteToggle.getAttribute("aria-pressed");
+  const pressed = await favoriteToggle.getAttribute("aria-pressed");
   console.log(`Initial aria-pressed: ${pressed}`);
 
   // If already true, toggle to false to reset
