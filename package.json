@@ -12,7 +12,10 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:business": "playwright test e2e/business",
+    "test:e2e:business:ui": "playwright test e2e/business --ui",
+    "test:e2e:business:headed": "playwright test e2e/business --headed"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.2.1",
