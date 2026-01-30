@@ -51,6 +51,16 @@ test("favorite remains saved after page refresh", async ({ page, context }) => {
   await expect(page.getByPlaceholder(/email/i)).toBeHidden({ timeout: 5000 });
   console.log("✅ Logged in");
 
+  // 1.1 OPEN MOVIE DETAILS (stable URL for refresh)
+  await page.getByRole("button", { name: /about movie/i }).click();
+  await expect(page.getByTestId("movie-details-page")).toBeVisible({
+    timeout: 5000,
+  });
+
+  // Rebind favorite toggle to Movie Details page
+  favoriteToggle = page.getByTestId("favorite-toggle");
+  await expect(favoriteToggle).toBeVisible({ timeout: 5000 });
+
   // 2. NORMALIZE START STATE - Ensure favorite is OFF
   const pressed = await favoriteToggle.getAttribute("aria-pressed");
   if (pressed === "true") {
@@ -89,13 +99,50 @@ test("favorite remains saved after page refresh", async ({ page, context }) => {
 
   // 4. REFRESH PAGE
   await page.reload();
+
+  // Wait for favorites API to load and capture response
+  const favoritesApiResponse = await page.waitForResponse(
+    (response) =>
+      response.url().includes("/favorites") && response.status() === 200,
+    { timeout: 10000 },
+  );
+
+  // Debug: Check API response
+  const favoritesData = await favoritesApiResponse.json();
+  console.log(
+    `📊 Favorites API response after reload:`,
+    JSON.stringify(favoritesData).substring(0, 200),
+  );
+
   await expect(page.getByRole("main")).toBeVisible({ timeout: 5000 });
+
+  // Wait for state to sync (Redux needs time to update UI after API response)
+  await page.waitForTimeout(2000);
 
   // 5. VERIFY PERSISTENCE
   const favoriteToggleAfterRefresh = page.getByTestId("favorite-toggle");
   await expect(favoriteToggleAfterRefresh).toBeVisible({ timeout: 5000 });
 
-  // Check aria-pressed is STILL true
+  // CRITICAL: Wait for button state to sync with API data
+  // The issue: RTK Query loads favorites, but Hero.tsx useEffect needs time to update isFavorite state
+  // Solution: Wait for aria-pressed to become "true" (up to 15 seconds)
+  await page.waitForFunction(
+    () => {
+      const btn = document.querySelector('[data-testid="favorite-toggle"]');
+      return btn?.getAttribute("aria-pressed") === "true";
+    },
+    { timeout: 15000 },
+  );
+
+  // Check aria-pressed is STILL true - with retry logic
+  await expect(favoriteToggleAfterRefresh).toHaveAttribute(
+    "aria-pressed",
+    "true",
+    {
+      timeout: 3000,
+    },
+  );
+
   const pressedAfterRefresh =
     await favoriteToggleAfterRefresh.getAttribute("aria-pressed");
   console.log(`After refresh - aria-pressed: ${pressedAfterRefresh}`);
@@ -105,9 +152,21 @@ test("favorite remains saved after page refresh", async ({ page, context }) => {
 
   // 6. BONUS: Second refresh to triple-check
   await page.reload();
+
+  // Wait for favorites API to load again
+  await page.waitForResponse(
+    (response) =>
+      response.url().includes("/favorites") && response.status() === 200,
+    { timeout: 5000 },
+  );
+
   await expect(page.getByRole("main")).toBeVisible({ timeout: 5000 });
+  await page.waitForTimeout(1000);
 
   const favoriteToggleFinal = page.getByTestId("favorite-toggle");
+  await expect(favoriteToggleFinal).toHaveAttribute("aria-pressed", "true", {
+    timeout: 5000,
+  });
   const pressedFinal = await favoriteToggleFinal.getAttribute("aria-pressed");
   expect(pressedFinal).toBe("true");
   console.log("✅ Favorite still persisted (second refresh)");

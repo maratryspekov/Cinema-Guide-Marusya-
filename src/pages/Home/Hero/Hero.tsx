@@ -48,6 +48,12 @@ const Hero = () => {
   useEffect(() => {
     fetchMovie();
   }, []);
+  // ✅ При монтировании принудительно обновляем favorites, если юзер залогинен
+  useEffect(() => {
+    if (user) {
+      refetchFavorites();
+    }
+  }, [user, refetchFavorites]);
 
   // ✅ ВАЖНО: синхронизацию делаем только когда favorites реально получены
   useEffect(() => {

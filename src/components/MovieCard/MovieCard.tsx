@@ -20,16 +20,28 @@ const MovieCard: FC<MovieCardProps> = ({
 }) => {
   const navigate = useNavigate();
 
-  const handleClick = () => {
+  const goToDetails = () => {
     navigate(`/movie/${movie.id}`);
   };
 
   return (
     <div
       className={`${s.card} ${fullWidth ? s.cardFullWidth : ""}`}
-      onClick={handleClick}
+      role="link"
+      tabIndex={0}
+      aria-label={`Open movie ${movie.title}`}
+      data-testid="movie-card"
+      data-movie-id={movie.id}
+      onClick={goToDetails}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          goToDetails();
+        }
+      }}
     >
       {showRank && rank && <span className={s.card__rank}>{rank}</span>}
+
       <div className={s.card__inner}>
         <img
           src={movie.posterUrl}
@@ -38,7 +50,20 @@ const MovieCard: FC<MovieCardProps> = ({
           className={s.card__image}
         />
       </div>
-      {onAddFavorite && <button onClick={onAddFavorite}>В избранное</button>}
+
+      {onAddFavorite && (
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation(); // важно: не открывать details при клике на кнопку
+            onAddFavorite();
+          }}
+          aria-label="Add to favorites"
+          data-testid="movie-card-favorite"
+        >
+          В избранное
+        </button>
+      )}
     </div>
   );
 };
