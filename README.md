@@ -2,8 +2,9 @@
 
 [![CI](https://github.com/maratryspekov/Cinema-Guide-Marusya-/actions/workflows/ci.yml/badge.svg)](https://github.com/maratryspekov/Cinema-Guide-Marusya-/actions/workflows/ci.yml)
 [![Playwright Tests](https://img.shields.io/badge/tested%20with-Playwright-45ba4b?logo=playwright)](https://playwright.dev/)
+[![Vercel](https://img.shields.io/badge/deployed%20on-Vercel-black?logo=vercel)](https://cinema-guide-marusya.vercel.app)
 
-> 🚀 **[Live Demo](https://cinema-guide-marusya.vercel.app)** (if deployed on Vercel)
+> 🚀 **Live Demo**: https://cinema-guide-marusya.vercel.app
 
 A modern movie discovery web app built with React, TypeScript, and Vite. Search films, browse by genres, view details, and manage your favorites — all in a clean dark UI.
 
@@ -152,9 +153,9 @@ npm run test:e2e:report       # View last test results
 
 **On CI:**
 
-- Tests run automatically on push/PR to main/master
+- Tests run automatically on push/PR to main
 - Credentials are provided via GitHub Secrets: `E2E_EMAIL`, `E2E_PASSWORD`
-- Test artifacts (traces, videos) are uploaded on failure
+- Artifacts uploaded on failure (when enabled in CI)
 
 ---
 
@@ -238,4 +239,4 @@ Contributions are welcome! Please open issues or submit pull requests.
 
 ⭐ **If you like this project, please give it a star on GitHub!**
 
-**Project Link**:https://github.com/maratryspekov/Cinema-Guide-Marusya-
+**Project Link**: https://github.com/maratryspekov/Cinema-Guide-Marusya-
