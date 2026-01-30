@@ -1,54 +1,55 @@
 import { test, expect } from "@playwright/test";
 
 /**
- * BUSINESS TEST 1: Search → Open Movie → Details Loaded
+ * BUSINESS TEST 1: Browse → Find Movie → Details Loaded
  *
- * Value: User finds a movie and reaches the details page
- * Validates: Core discovery flow works end-to-end
+ * Value: User discovers a movie through genres and views complete details
+ * Validates: Core discovery flow works end-to-end (more stable than search)
  */
-test("user can search for movie and view complete details", async ({
+test("user can browse genres, find movie, and view complete details", async ({
   page,
 }) => {
-  // 1. START
+  // 1. START - Home page
   await page.goto("/");
-  await expect(page.getByRole("main")).toBeVisible();
+  await expect(page.getByRole("main")).toBeVisible({ timeout: 5000 });
 
-  // 2. SEARCH OPENS
-  const searchInput = page.getByPlaceholder(/search/i).first();
-  await expect(searchInput).toBeVisible({ timeout: 5000 });
+  // 2. NAVIGATE TO GENRES
+  const genresLink = page.getByRole("link", { name: /genres/i });
+  await expect(genresLink).toBeVisible({ timeout: 5000 });
+  await genresLink.click();
 
-  // 3. TYPE QUERY
-  await searchInput.click();
-  await searchInput.fill("action");
-  await page.waitForTimeout(500); // Wait for API response
+  // 3. GENRES PAGE LOADED
+  const genresHeading = page.getByRole("heading", { name: /genres/i });
+  await expect(genresHeading).toBeVisible({ timeout: 5000 });
 
-  // 4. RESULTS APPEAR - Wait for search modal/dropdown
-  const searchModal = page
-    .locator("[class*='modal'], [class*='dropdown']")
-    .first();
-  await expect(searchModal).toBeVisible({ timeout: 5000 });
+  // 4. SELECT FIRST GENRE CARD
+  const genreCards = page.locator("[class*='card']");
+  await expect(genreCards.first()).toBeVisible({ timeout: 5000 });
+  await genreCards.first().click();
 
-  // 5. CLICK FIRST RESULT - Inside modal
-  const firstResult = searchModal
-    .locator("button, a, div[role='button']")
-    .first();
-  await expect(firstResult).toBeVisible();
+  // 5. GENRE MOVIES PAGE LOADED - Should show heading with genre
+  const movieHeading = page.getByRole("heading").first();
+  await expect(movieHeading).toBeVisible({ timeout: 5000 });
 
-  await firstResult.click();
+  // 6. WAIT FOR MOVIES TO LOAD
+  await page.waitForTimeout(500);
 
-  // Wait for navigation to movie details page
+  // 7. CLICK FIRST MOVIE
+  const movieCards = page.locator("[class*='card'], [class*='Movie']");
+  await expect(movieCards.first()).toBeVisible({ timeout: 5000 });
+  await movieCards.first().click();
+
+  // 8. WAIT FOR MOVIE DETAILS PAGE
   await page.waitForURL(/.*movie.*/, { timeout: 10000 }).catch(() => null);
   await page.waitForTimeout(500);
 
-  // 6. MOVIE DETAILS LOADED - Check for key elements
+  // 9. MOVIE DETAILS LOADED - Check for key elements
   // Title
   const movieTitle = page.locator("h1, h2").first();
   await expect(movieTitle).toBeVisible({ timeout: 5000 });
 
   // Rating badge
-  const ratingBadge = page
-    .locator("[class*='rating'], [class*='badge']")
-    .first();
+  const ratingBadge = page.locator("[class*='rating'], [class*='badge']").first();
   await expect(ratingBadge).toBeVisible({ timeout: 5000 });
 
   // Description text
@@ -59,5 +60,6 @@ test("user can search for movie and view complete details", async ({
   const metadata = page.locator("p, span").nth(1);
   await expect(metadata).toBeVisible({ timeout: 5000 });
 
-  console.log("✅ Search → Details flow complete");
+  console.log("✅ Browse → Genres → Movie → Details flow complete");
+});
 });

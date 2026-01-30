@@ -4,19 +4,19 @@ These are **production-ready, portfolio-quality** E2E tests that validate core b
 
 ## 📋 Tests
 
-### 1. **Search to Details** (`search-to-details.spec.ts`)
+### 1. **Browse to Details** (`search-to-details.spec.ts`)
 
 ```
-User can search for movie and view complete details
+User can browse genres, find movie, and view complete details
 ```
 
-- **Business Value**: User finds movie → reaches details page (core discovery flow)
+- **Business Value**: User discovers movie through genres → reaches details page (core discovery flow)
 - **What It Tests**:
-  - Search input responsive
-  - Query results appear
-  - Click result → navigation to movie details
+  - Navigate to Genres page
+  - Click first genre card
+  - Click first movie in genre
   - Movie details fully loaded (title, rating, description, metadata)
-- **Portfolio Highlight**: Demonstrates understanding of user journey testing
+- **Portfolio Highlight**: Demonstrates understanding of user journey testing + multi-step workflows
 
 ### 2. **Favorites Auth Gate** (`favorites-auth-gate.spec.ts`)
 
@@ -124,7 +124,7 @@ if (pressed === "true") {
 
 | Scenario               | Test                  | Business Impact             |
 | ---------------------- | --------------------- | --------------------------- |
-| Discovery              | search-to-details     | Users find content          |
+| Discovery              | browse-to-details     | Users find content          |
 | Auth + Premium Feature | favorites-auth-gate   | Conversion + Access control |
 | Data Persistence       | favorites-persistence | User trust + Retention      |
 
