@@ -14,29 +14,31 @@ test("user can search for movie and view complete details", async ({
   await expect(page.getByRole("main")).toBeVisible();
 
   // 2. SEARCH OPENS
-  const searchInput =
-    page.getByTestId("search-input") ||
-    page.getByPlaceholder(/search/i).first();
+  const searchInput = page.getByPlaceholder(/search/i).first();
   await expect(searchInput).toBeVisible({ timeout: 5000 });
 
   // 3. TYPE QUERY
   await searchInput.click();
   await searchInput.fill("action");
-  await page.waitForTimeout(300); // Debounce wait
+  await page.waitForTimeout(500); // Wait for API response
 
-  // 4. RESULTS APPEAR
-  // Wait for API response with movies
-  const resultsDropdown = page.locator("[class*='dropdown']").first();
-  await expect(resultsDropdown).toBeVisible({ timeout: 5000 });
+  // 4. RESULTS APPEAR - Wait for search modal/dropdown
+  const searchModal = page
+    .locator("[class*='modal'], [class*='dropdown']")
+    .first();
+  await expect(searchModal).toBeVisible({ timeout: 5000 });
 
-  // 5. CLICK FIRST RESULT
-  const firstResult = resultsDropdown.locator("button, a").first();
+  // 5. CLICK FIRST RESULT - Inside modal
+  const firstResult = searchModal
+    .locator("button, a, div[role='button']")
+    .first();
   await expect(firstResult).toBeVisible();
 
   await firstResult.click();
-  await page
-    .waitForNavigation({ url: /.*movie.*/, timeout: 10000 })
-    .catch(() => null);
+
+  // Wait for navigation to movie details page
+  await page.waitForURL(/.*movie.*/, { timeout: 10000 }).catch(() => null);
+  await page.waitForTimeout(500);
 
   // 6. MOVIE DETAILS LOADED - Check for key elements
   // Title

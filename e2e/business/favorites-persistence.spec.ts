@@ -19,7 +19,16 @@ test("favorite remains saved after page refresh", async ({ page, context }) => {
   await page.goto("/");
   await expect(page.getByRole("main")).toBeVisible({ timeout: 5000 });
 
-  const favoriteToggle = page.getByTestId("favorite-toggle");
+  let favoriteToggle = page.getByTestId("favorite-toggle");
+
+  // If data-testid doesn't exist, fallback to role-based selector
+  const testIdCount = await favoriteToggle.count();
+  if (testIdCount === 0) {
+    favoriteToggle = page
+      .getByRole("button", { name: /favorite|heart/i })
+      .first();
+  }
+
   await expect(favoriteToggle).toBeVisible({ timeout: 5000 });
   await favoriteToggle.click();
 

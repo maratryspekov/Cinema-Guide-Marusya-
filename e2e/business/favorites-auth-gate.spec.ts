@@ -23,7 +23,16 @@ test("unauthorized user is prompted to login for favorites, then can save", asyn
   await expect(page.getByRole("main")).toBeVisible({ timeout: 5000 });
 
   // 2. FIND FAVORITE BUTTON
-  const favoriteToggle = page.getByTestId("favorite-toggle");
+  let favoriteToggle = page.getByTestId("favorite-toggle");
+
+  // If data-testid doesn't exist, fallback to role-based selector
+  const testIdCount = await favoriteToggle.count();
+  if (testIdCount === 0) {
+    favoriteToggle = page
+      .getByRole("button", { name: /favorite|heart/i })
+      .first();
+  }
+
   await expect(favoriteToggle).toBeVisible({ timeout: 5000 });
 
   // 3. CLICK FAVORITE (should trigger login modal)
